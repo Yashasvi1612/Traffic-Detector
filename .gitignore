@@ -1,0 +1,5 @@
+yolov8n.pt
+detection_log.csv
+__pycache__/
+*.pyc
+.env
