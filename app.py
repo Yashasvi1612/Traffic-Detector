@@ -181,7 +181,7 @@ def load_dashboard():
 
     df["Timestamp"] = pd.to_datetime(df["Timestamp"])
 
-    # People over time chart
+    # People over time chart X axis=time, Y axis=people count, we also add markers for when alerts were triggered
     fig_people = go.Figure()
     fig_people.add_trace(go.Scatter(
         x=df["Timestamp"],

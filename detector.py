@@ -1,7 +1,9 @@
+##This is initial version of the code, without any UI or data logging. Now the app.py file contains
+## all the logic and code, So this becomes a redundant file.
 import cv2
 import time
 import threading
-import winsound
+import winsound # For Windows alert sound
 from ultralytics import YOLO
 from deep_sort_realtime.deepsort_tracker import DeepSort
 
@@ -23,7 +25,7 @@ print("Press 'q' to quit")
 prev_time = time.time()
 
 # ✅ Unique ID tracking
-counted_ids = {"Person": set(), "Car": set()}
+counted_ids = {"Person": set(), "Car": set()} #we using sets to store unique IDs for each class and ignore the repeated objects.
 total_people = 0
 total_cars = 0
 
@@ -35,7 +37,7 @@ def play_alert():
     winsound.Beep(1000, 500)
 
 while True:
-    ret, frame = cap.read()
+    ret, frame = cap.read() #ret is a boolean — False means camera disconnected or video ended
     if not ret:
         break
 
@@ -45,15 +47,15 @@ while True:
     # ✅ Prepare detections for DeepSORT
     detections = []
     for box in results.boxes:
-        cls_id = int(box.cls[0])
-        conf = float(box.conf[0])
+        cls_id = int(box.cls[0]) # get cladss id 0=person 2=car from yolo model
+        conf = float(box.conf[0]) #confidence score for the detection (0.0-1.0)
 
         if cls_id not in TARGET_CLASSES or conf < 0.4:
             continue
 
         x1, y1, x2, y2 = map(int, box.xyxy[0])
         w, h = x2 - x1, y2 - y1
-        detections.append(([x1, y1, w, h], conf, TARGET_CLASSES[cls_id]))
+        detections.append(([x1, y1, w, h], conf, TARGET_CLASSES[cls_id])) #detctions is an object list that contains the bounding box coordinates, confidence score, and class label for each detected object. The bounding box is represented as [x1, y1, width, height], where (x1, y1) is the top-left corner of the box. The confidence score indicates how confident the model is about the detection, and the class label specifies whether it's a "Person" or "Car". This list will be used by the DeepSORT tracker to associate detections across frames and maintain consistent IDs for each object.
 
     # ✅ Update tracker
     tracks = tracker.update_tracks(detections, frame=frame)
